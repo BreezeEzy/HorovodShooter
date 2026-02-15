@@ -47,11 +47,11 @@ UE_LOG(LogHorovod, Warning, TEXT("[WEAPON DEBUG] OnUsePressed Called. CurrentAmm
 	}
 	PerformFire();
 	CurrentAmmo--;
-	UE_LOG(LogTemp, Warning, TEXT("Ammo left = %d"), CurrentAmmo);
+	UE_LOG(LogHorovod, Warning, TEXT("Ammo left = %d"), CurrentAmmo);
 	
 	if (CurrentAmmo <= 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No ammo left, throwing weapon"));
+		UE_LOG(LogHorovod, Warning, TEXT("No ammo left, throwing weapon"));
 		bIsArmedToExplode = true;
 	}
 	return true;
