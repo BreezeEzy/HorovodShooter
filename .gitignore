@@ -1,0 +1,29 @@
+# 1. Игнорируем вообще всё
+*
+
+# 2. Игнорируем служебную папку Diversion (Важно!)
+.dv/
+
+# 3. Разрешаем папки с кодом и конфигами (Whitelisting)
+!*/
+!Source/
+!Config/
+!*.uproject
+!*.png
+!*.md
+!.gitignore
+
+# 4. Разрешаем содержимое этих папок
+!Source/**
+!Config/**
+
+# 5. На всякий случай блокируем мусор, если он попал в разрешенные папки
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+Build/
+.idea/
+.vs/
+*.sln
+*.vcqh
