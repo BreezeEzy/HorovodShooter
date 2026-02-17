@@ -22,6 +22,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	
+	virtual void Tick(float DeltaTime) override;
 
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -32,7 +34,7 @@ public:
 	// Функция полного сброса состояния (вызывается Контроллером при респауне)
 	void ResetCharacterState();
 
-protected:
+public:	
 	// Событие для Блюпринтов (Звуки, Партиклы смерти)
 	UFUNCTION(BlueprintImplementableEvent, Category = "Health")
 	void OnPlayerDied();
@@ -62,19 +64,45 @@ protected:
 	TObjectPtr<UInputAction> FireAction;
 
 	// --- DASH SETTINGS ---
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat", meta = (ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dash", meta = (ClampMin = "0.0"))
 	float DashForce = 4000.0f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat", meta = (ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dash", meta = (ClampMin = "0.0"))
 	float DashDuration = 0.2f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat", meta = (ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dash", meta = (ClampMin = "0.0"))
 	float DashCooldown = 1.0f;
 
-	// --- STATE ---
-	bool bIsDead = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Dash")
 	bool bCanDash = true;
+	
+	bool bIsDead = false;
+	
+	//Настройки качания головой
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MovementFeel|Audio")
+	float StepDistance = 350.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MovementFeel|Audio")
+	TObjectPtr<USoundBase> FootstepSound;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MovementFeel|Audio")
+	TObjectPtr<USoundBase> LandSound;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MovementFeel|Audio")
+	TSubclassOf<UCameraShakeBase> LandCameraShake;
 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementFeel|HeadBob")
+	bool bEnableHeadBob = true;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementFeel|HeadBob")
+	float BobAmplitude = 1.f;
+	
+	
+private:
+
+	FVector DefaultCameraLocation;
+	float DistanceAccumulator = 0.f;
+	bool bHasPlayedSound = false;
+	
+	
+protected:
 	// Таймеры Дэша
 	FTimerHandle DashTimerHandle;     // Кулдаун
 	FTimerHandle DashDurationTimer;   // Время скольжения
@@ -83,6 +111,9 @@ protected:
 	float DefaultGroundFriction;
 	float DefaultBrakingDeceleration;
 
+	void ProcessMovementEffects(float DeltaTime);
+	
+	
 	// --- INPUT HANDLERS ---
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -91,6 +122,7 @@ protected:
 	// Вспомогательные функции Дэша
 	void StopDashing();
 	void ResetDash();
-	
 	void OnPrimaryAction();
+	
+	virtual void Landed(const FHitResult& Hit) override;
 };
