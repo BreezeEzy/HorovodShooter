@@ -9,7 +9,7 @@
 //Не забываем включит интерфейс
 #include "Interfaces/GrabbableInterface.h"
 #include "Interfaces/UsableInterface.h"
-#include "ABaseThowableItem.h"
+#include "Items/ABaseThowableItem.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 
 // Sets default values for this component's properties

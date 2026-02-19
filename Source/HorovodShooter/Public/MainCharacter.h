@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "DamagableInterface.h"
+#include "Interfaces/DamagableInterface.h"
 #include "GameplayTagContainer.h"
 #include "MainCharacter.generated.h"
 

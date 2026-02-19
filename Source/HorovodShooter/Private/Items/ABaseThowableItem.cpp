@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ABaseThowableItem.h"
+#include "Items/ABaseThowableItem.h"
 
-#include "DamagableInterface.h"
+#include "Interfaces/DamagableInterface.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
