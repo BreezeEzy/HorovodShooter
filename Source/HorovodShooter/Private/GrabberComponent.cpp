@@ -140,7 +140,7 @@ void UGrabberComponent::ThrowHeldObject()
 	if (HeldActor && HeldActor->Implements<UGrabbableInterface>())
 	{
 		GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(PlayerViewLocation, PlayerViewRotation);
-		IGrabbableInterface::Execute_OnThrown(HeldActor, PlayerViewRotation.Vector(), ThrowForce, GetOwner());
+		IGrabbableInterface::Execute_OnThrown(HeldActor, PlayerViewRotation.Vector(), ThrowForce);
 	}
 	else
 	{
@@ -151,6 +151,7 @@ void UGrabberComponent::ThrowHeldObject()
 
 void UGrabberComponent::ReleaseHeldObject()
 {
+	
 	if (!PhysicsHandle || !HeldComponent) {return;}
 	AActor* HeldActor = HeldComponent->GetOwner();
 	
@@ -158,7 +159,7 @@ void UGrabberComponent::ReleaseHeldObject()
 	
 	if (HeldComponent && HeldActor->Implements<UGrabbableInterface>())
 	{
-		IGrabbableInterface::Execute_OnReleased(HeldActor);
+		IGrabbableInterface::Execute_OnReleased(HeldActor, GetOwner());
 	}
 	HeldComponent = nullptr;
 }

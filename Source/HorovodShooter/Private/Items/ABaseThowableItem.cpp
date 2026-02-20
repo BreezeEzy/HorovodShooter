@@ -49,31 +49,27 @@ void AABaseThowableItem::BeginPlay()
 void AABaseThowableItem::OnGrabbed_Implementation(USceneComponent* GrabberComponent) 
 {
 	SetState(EThrowableState::Held);
+	if (GrabberComponent && GrabberComponent->GetOwner())
+	{
+		this->CustomTimeDilation = GrabberComponent->GetOwner()->CustomTimeDilation;
+	}
 }
 
-void AABaseThowableItem::OnReleased_Implementation()
+void AABaseThowableItem::OnReleased_Implementation(AActor* Releaser)
 {
+	this->CustomTimeDilation = 0.0f;
 	SetState(EThrowableState::Loot);
 }
 
-void AABaseThowableItem::OnThrown_Implementation(FVector Direction, float Magnitude, AActor* Thrower)
+void AABaseThowableItem::OnThrown_Implementation(FVector Direction, float Magnitude)
 {
 	SetState(EThrowableState::Thrown);
-	
+	this->CustomTimeDilation = 1.0f;
 	if (ProjectileMovement)
 	{
 		ProjectileMovement->Velocity = Direction * Magnitude;
 	}
-	if (Thrower)
-	{
-		CachedTimeManager = Thrower->FindComponentByClass<UTimeManagerComponent>();
-		if (CachedTimeManager)
-		{
-			CachedTimeManager->OnTimeChanged.AddDynamic(this, &AABaseThowableItem::HandleTimeChanged);
-			float CurrentTime = UGameplayStatics::GetGlobalTimeDilation(this);
-			HandleTimeChanged(CurrentTime);
-		}
-	}
+	
 }
 
 void AABaseThowableItem::OnProjectileBounce(const FHitResult& ImpactResult, const FVector& ImpactVelocity)
@@ -150,21 +146,10 @@ void AABaseThowableItem::SetState(EThrowableState NewState)
 	}
 }
 
-void AABaseThowableItem::HandleTimeChanged(float NewGlobalTime)
-{
-	if (NewGlobalTime > 0.01f)
-	{
-		this->CustomTimeDilation = 1 / NewGlobalTime;
-	}
-}
+
 
 void AABaseThowableItem::HandleImpact_Implementation(const FHitResult& Hit)
 {
-	if (CachedTimeManager)
-	{
-		CachedTimeManager->OnTimeChanged.RemoveDynamic(this, &AABaseThowableItem::HandleTimeChanged);
-		this->CustomTimeDilation = 1.0f;
-	}
 	AActor* HitActor = Hit.GetActor();
 	if (!HitActor) {return;}
 	
