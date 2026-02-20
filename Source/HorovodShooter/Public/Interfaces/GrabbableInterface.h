@@ -30,5 +30,5 @@ public:
 	void OnReleased();
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interface")
-	void OnThrown(FVector Direction, float Magnitude);
+	void OnThrown(FVector Direction, float Magnitude, AActor* Thrower);
 };

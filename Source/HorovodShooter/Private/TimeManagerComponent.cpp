@@ -31,6 +31,7 @@ void UTimeManagerComponent::ApplyTimeDilation(float NewGlobalTime)
 	float ClampedTime = FMath::Clamp(NewGlobalTime, 0.f, 1.f);
 	
 	UGameplayStatics::SetGlobalTimeDilation(this, ClampedTime);
+	OnTimeChanged.Broadcast(ClampedTime);
 	
 	float CompensationFactor = 1 / ClampedTime;
 	
@@ -56,7 +57,6 @@ void UTimeManagerComponent::ApplyTimeDilation(float NewGlobalTime)
 				HeldActor->CustomTimeDilation = CompensationFactor;
 			}
 		}
-		
 	}
 }
 

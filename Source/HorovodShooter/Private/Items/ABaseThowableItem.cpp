@@ -3,6 +3,7 @@
 
 #include "Items/ABaseThowableItem.h"
 
+#include "TimeManagerComponent.h"
 #include "Interfaces/DamagableInterface.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -55,13 +56,23 @@ void AABaseThowableItem::OnReleased_Implementation()
 	SetState(EThrowableState::Loot);
 }
 
-void AABaseThowableItem::OnThrown_Implementation(FVector Direction, float Magnitude)
+void AABaseThowableItem::OnThrown_Implementation(FVector Direction, float Magnitude, AActor* Thrower)
 {
 	SetState(EThrowableState::Thrown);
 	
 	if (ProjectileMovement)
 	{
 		ProjectileMovement->Velocity = Direction * Magnitude;
+	}
+	if (Thrower)
+	{
+		CachedTimeManager = Thrower->FindComponentByClass<UTimeManagerComponent>();
+		if (CachedTimeManager)
+		{
+			CachedTimeManager->OnTimeChanged.AddDynamic(this, &AABaseThowableItem::HandleTimeChanged);
+			float CurrentTime = UGameplayStatics::GetGlobalTimeDilation(this);
+			HandleTimeChanged(CurrentTime);
+		}
 	}
 }
 
@@ -139,8 +150,21 @@ void AABaseThowableItem::SetState(EThrowableState NewState)
 	}
 }
 
+void AABaseThowableItem::HandleTimeChanged(float NewGlobalTime)
+{
+	if (NewGlobalTime > 0.01f)
+	{
+		this->CustomTimeDilation = 1 / NewGlobalTime;
+	}
+}
+
 void AABaseThowableItem::HandleImpact_Implementation(const FHitResult& Hit)
 {
+	if (CachedTimeManager)
+	{
+		CachedTimeManager->OnTimeChanged.RemoveDynamic(this, &AABaseThowableItem::HandleTimeChanged);
+		this->CustomTimeDilation = 1.0f;
+	}
 	AActor* HitActor = Hit.GetActor();
 	if (!HitActor) {return;}
 	

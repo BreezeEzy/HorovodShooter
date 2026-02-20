@@ -140,7 +140,7 @@ void UGrabberComponent::ThrowHeldObject()
 	if (HeldActor && HeldActor->Implements<UGrabbableInterface>())
 	{
 		GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(PlayerViewLocation, PlayerViewRotation);
-		IGrabbableInterface::Execute_OnThrown(HeldActor, PlayerViewRotation.Vector(), ThrowForce);
+		IGrabbableInterface::Execute_OnThrown(HeldActor, PlayerViewRotation.Vector(), ThrowForce, GetOwner());
 	}
 	else
 	{

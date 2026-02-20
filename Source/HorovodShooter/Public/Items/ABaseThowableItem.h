@@ -55,7 +55,7 @@ protected:
 public:
 	virtual void OnGrabbed_Implementation(USceneComponent* GrabberComponent) override;
 	virtual void OnReleased_Implementation() override;
-	virtual void OnThrown_Implementation(FVector Direction, float Magnitude) override;
+	virtual void OnThrown_Implementation(FVector Direction, float Magnitude, AActor* Thrower) override;
 	
 	//Геттеры
 	bool UsePhysicsHold() const { return bUsePhysicsHold; }
@@ -70,4 +70,10 @@ protected:
 	void SetState(EThrowableState NewState); 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Combat", meta = (Categories = "Damage"))
 	void HandleImpact(const FHitResult& Hit);
+	
+	UFUNCTION()
+	void HandleTimeChanged(float NewGlobalTime);
+	
+	UPROPERTY()
+	class UTimeManagerComponent* CachedTimeManager;
 };

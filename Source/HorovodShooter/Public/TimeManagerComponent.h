@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "TimeManagerComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTimeChangedSignature, float, NewGlobalTime);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HOROVODSHOOTER_API UTimeManagerComponent : public UActorComponent
@@ -25,5 +26,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Time Manipulation")
 	void ApplyTimeDilation(float NewGlobalTime);
 
+	UPROPERTY(BlueprintAssignable, Category = "TimeManipulation")
+	FOnTimeChangedSignature OnTimeChanged;
 		
 };
