@@ -65,7 +65,7 @@ void UTimeManagerComponent::ApplyTimeDilation(float NewGlobalTime)
 				}
 			}
 		}
-
+	OnTimeChanged.Broadcast(NewGlobalTime);
 	
 }
 
