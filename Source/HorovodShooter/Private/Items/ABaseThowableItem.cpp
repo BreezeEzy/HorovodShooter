@@ -223,10 +223,8 @@ void AABaseThowableItem::CheckTreatedActors(float DeltaTime)
 		if (Hit.GetActor()->Implements<UWarningRecieverInterface>())
 		{
 			IWarningRecieverInterface::Execute_OnWarningRecieved(Hit.GetActor(), StartLocation, Velocity);
+			bHasSentWarning = true;
+			WarningCooldown = 0.5f;
 		}
-		bHasSentWarning = true;
-		WarningCooldown = 0.5f;
 	}
-	
-	
 }
