@@ -3,10 +3,13 @@
 
 #include "Items/ABaseThowableItem.h"
 
+#include "MainCharacter.h"
 #include "TimeManagerComponent.h"
 #include "Interfaces/DamagableInterface.h"
 #include "Components/StaticMeshComponent.h"
+#include "Engine/World.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Interfaces/WarningRecieverInterface.h"
 #include "Kismet/GameplayStatics.h"
 
 static const FName COLLISION_PHYSICS(TEXT("PhysicsActor"));
@@ -36,6 +39,26 @@ AABaseThowableItem::AABaseThowableItem()
 	
 	ProjectileMovement->bAutoActivate = false;
 }
+
+void AABaseThowableItem::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	
+	if (bHasSentWarning)
+	{
+		WarningCooldown -= DeltaTime;
+		if (WarningCooldown <= 0.0f)
+		{
+			bHasSentWarning = false;
+			WarningCooldown = 0.0f;
+		}
+	}
+	if (CurrentState == EThrowableState::Thrown)
+	{
+		CheckTreatedActors(DeltaTime);
+	}
+}
+
 
 // Called when the game starts or when spawned
 void AABaseThowableItem::BeginPlay()
@@ -138,6 +161,9 @@ void AABaseThowableItem::SetState(EThrowableState NewState)
 		ProjectileMovement->OnProjectileBounce.AddDynamic(this, &AABaseThowableItem::OnProjectileBounce);
 		ProjectileMovement->OnProjectileStop.AddDynamic(this, &AABaseThowableItem::OnProjectileStop);
 		
+		bHasSentWarning = false;
+		WarningCooldown = 0.0f;
+		
 		break;
 	case EThrowableState::Impact:
 		ProjectileMovement->Deactivate();
@@ -145,7 +171,6 @@ void AABaseThowableItem::SetState(EThrowableState NewState)
 		break;
 	}
 }
-
 
 
 void AABaseThowableItem::HandleImpact_Implementation(const FHitResult& Hit)
@@ -161,3 +186,47 @@ void AABaseThowableItem::HandleImpact_Implementation(const FHitResult& Hit)
 	
 }
 
+void AABaseThowableItem::CheckTreatedActors(float DeltaTime)
+{
+	if (bHasSentWarning) {return;}
+	
+	FVector StartLocation = GetActorLocation();
+	FVector Velocity = ProjectileMovement ? ProjectileMovement-> Velocity : GetVelocity();
+	
+	FVector EndLocation = StartLocation + Velocity * WarningLookAheadTime;
+	
+	FHitResult Hit;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
+	
+	bool bHit = GetWorld()->SweepSingleByChannel(
+		Hit,
+		StartLocation,
+		EndLocation,
+		FQuat::Identity,
+		ECC_Visibility,
+		FCollisionShape::MakeSphere(WarningSphereRadius),
+		CollisionParams
+		);
+	DrawDebugCapsule(
+		GetWorld(),
+		StartLocation + (EndLocation - StartLocation) * 0.5f,
+		(EndLocation - StartLocation).Size() * 0.5f, 
+		WarningSphereRadius,
+		(EndLocation - StartLocation).Rotation().Quaternion(),
+		bHit ? FColor::Red : FColor::Green,
+		false,
+		0.1);
+	
+	if (bHit && Hit.GetActor())
+	{
+		if (Hit.GetActor()->Implements<UWarningRecieverInterface>())
+		{
+			IWarningRecieverInterface::Execute_OnWarningRecieved(Hit.GetActor(), StartLocation, Velocity);
+		}
+		bHasSentWarning = true;
+		WarningCooldown = 0.5f;
+	}
+	
+	
+}

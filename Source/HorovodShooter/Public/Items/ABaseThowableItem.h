@@ -27,6 +27,7 @@ public:
 	// Sets default values for this actor's properties
 	AABaseThowableItem();
 
+	virtual void Tick(float DeltaTime) override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -51,6 +52,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 	bool bCanBeThrownManually = true;
 	
+	UPROPERTY(EditAnywhere, Category = "Settings|AI")
+	float WarningSphereRadius = 500.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Settings|AI")
+	float WarningLookAheadTime = 0.5f;
+	
+	bool bHasSentWarning = false;
+	float WarningCooldown = 0.f;
+
 	
 public:
 	virtual void OnGrabbed_Implementation(USceneComponent* GrabberComponent) override;
@@ -70,5 +80,8 @@ protected:
 	void SetState(EThrowableState NewState); 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Combat", meta = (Categories = "Damage"))
 	void HandleImpact(const FHitResult& Hit);
+	
+private:
+	void CheckTreatedActors(float DeltaTime);
 	
 };
