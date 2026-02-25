@@ -198,6 +198,7 @@ void AABaseThowableItem::CheckTreatedActors(float DeltaTime)
 	FHitResult Hit;
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
+	CollisionParams.AddIgnoredActor(UGameplayStatics::GetPlayerPawn(this, 0));
 	
 	bool bHit = GetWorld()->SweepSingleByChannel(
 		Hit,
