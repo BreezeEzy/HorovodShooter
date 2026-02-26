@@ -41,6 +41,18 @@ void AStalkerEnemy::Tick(float DeltaTime)
 	{
 		FVector PlayerLocation = CachedPlayer->GetActorLocation() + FVector(0.0f, 0.0f, 50.0f);
 		TargetLookLocation = FMath::VInterpTo(TargetLookLocation, PlayerLocation, DeltaTime, HeadTrackingSpeed);
+		
+		FVector DirectionToPlayer = (PlayerLocation - GetActorLocation()).GetSafeNormal();
+		FRotator TargetRotation = DirectionToPlayer.Rotation();
+		FRotator CurrentRotation = GetActorRotation();
+		
+		float DeltaYaw = FMath::FindDeltaAngleDegrees(CurrentRotation.Yaw, TargetRotation.Yaw);
+		
+		if (FMath::Abs(DeltaYaw) > 60.0f)
+		{
+			FRotator NewRotation = FMath::RInterpTo(CurrentRotation, FRotator(0.0f, TargetRotation.Yaw, 0.0f), DeltaTime, BodyTurnRate);
+			SetActorRotation(NewRotation);
+		}
 	}
 }
 

@@ -42,6 +42,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI|Animation")
 	float HeadTrackingSpeed = 5.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI|Animation")
+	float BodyTurnRate = 50.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI|Animation")
 	TObjectPtr<UAnimMontage> BlindingMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "AI|Evasion")
 	float EvasionCheckDistance = 400.0f;
