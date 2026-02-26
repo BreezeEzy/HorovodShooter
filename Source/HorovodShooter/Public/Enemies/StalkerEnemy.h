@@ -47,7 +47,7 @@ protected:
 	float EvasionCheckDistance = 400.0f;
 	
 private:
-	FVector CalculateEvasionDirection(FVector HazardVelocity);
+	FVector CalculateEvasionDirection(FVector HazardLocation, FVector HazardVelocity);
 	UPROPERTY()
 	AActor* CachedPlayer;
 };

@@ -63,7 +63,7 @@ void AStalkerEnemy::OnWarningRecieved_Implementation(FVector HazardLocation, FVe
 {
 	if (!DashComponent) return;
 	
-	FVector SafeDirection = CalculateEvasionDirection(HazardVelocity);
+	FVector SafeDirection = CalculateEvasionDirection(HazardLocation, HazardVelocity);
 	
 	bool bDidDash = DashComponent->PerformDash(SafeDirection);
 	if (bDidDash)
@@ -72,35 +72,42 @@ void AStalkerEnemy::OnWarningRecieved_Implementation(FVector HazardLocation, FVe
 	}
 }
 
-FVector AStalkerEnemy::CalculateEvasionDirection(FVector HazardVelocity)
+FVector AStalkerEnemy::CalculateEvasionDirection(FVector HazardLocation, FVector HazardVelocity)
 {
 	FVector HazardDirection = HazardVelocity.GetSafeNormal();
 	
-	FVector RightEvasion = FVector::CrossProduct(HazardDirection, FVector::UpVector).GetSafeNormal();
-	FVector LeftEvasion = -RightEvasion;
+	FVector RightRelative = FVector::CrossProduct(HazardDirection, FVector::UpVector).GetSafeNormal();
+	FVector LeftRelative = -RightRelative;
+	
+	FVector ToEnemy = (GetActorLocation() - HazardLocation).GetSafeNormal();
+	
+	float Dot = FVector::DotProduct(RightRelative, ToEnemy);
+	
+	FVector PrimaryDirection = (Dot > 0.0f) ? RightRelative : LeftRelative;
+	FVector SecondaryDirection = (Dot > 0.0f) ? LeftRelative : RightRelative; 
 	
 	FHitResult HitResult;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 	
-	bool bRightBlocked = GetWorld()->LineTraceSingleByChannel(
+	bool bPrimaryBlocked = GetWorld()->LineTraceSingleByChannel(
 		HitResult,
 		GetActorLocation(),
-		GetActorLocation() + RightEvasion * EvasionCheckDistance,
+		GetActorLocation() + PrimaryDirection * EvasionCheckDistance,
 		ECC_Visibility,
 		Params
 		);
-	if (!bRightBlocked) return RightEvasion;
+	if (!bPrimaryBlocked) return PrimaryDirection;
 	
-	bool bLeftBlocked = GetWorld()->LineTraceSingleByChannel(
+	bool bSecondaryBlocked = GetWorld()->LineTraceSingleByChannel(
 	HitResult,
 	GetActorLocation(),
-	GetActorLocation() + RightEvasion * EvasionCheckDistance,
+	GetActorLocation() + SecondaryDirection * EvasionCheckDistance,
 	ECC_Visibility,
 	Params
 	);
 	
-	if (!bLeftBlocked) return LeftEvasion;
+	if (!bSecondaryBlocked) return SecondaryDirection;
 	
 	return -HazardDirection;
 }

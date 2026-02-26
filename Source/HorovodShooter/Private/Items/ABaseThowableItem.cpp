@@ -149,7 +149,7 @@ void AABaseThowableItem::SetState(EThrowableState NewState)
 		ItemMesh->SetEnableGravity(true);
 		
 		ItemMesh->SetCollisionProfileName(TEXT("BlockAll"));
-		ItemMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+		//ItemMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 		
 		ProjectileMovement->SetUpdatedComponent(ItemMesh);
 		ProjectileMovement->Velocity = FVector::ZeroVector;
