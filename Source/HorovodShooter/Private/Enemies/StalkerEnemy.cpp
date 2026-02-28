@@ -5,7 +5,8 @@
 #include "Components/DashComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Components/CapsuleComponent.h"
+#include "Enemies/EnemyAIController.h"
+
 
 // Sets default values
 AStalkerEnemy::AStalkerEnemy()
@@ -21,6 +22,8 @@ AStalkerEnemy::AStalkerEnemy()
 		GetCharacterMovement()->bUseControllerDesiredRotation = true;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
+	AIControllerClass = AEnemyAIController::StaticClass();
+	AutoPossessAI =	EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 // Called when the game starts or when spawned
