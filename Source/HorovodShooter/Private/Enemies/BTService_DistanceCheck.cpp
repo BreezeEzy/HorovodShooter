@@ -47,4 +47,17 @@ void UBTService_DistanceCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8
 	
 	bool bNeedToMove = (Distance <= MinDistance || Distance >= MaxDistance);
 	BlackboardComp->SetValueAsBool(OutOfRangeKey.SelectedKeyName, bNeedToMove);
+	
+	if (bNeedToMove)
+	{
+		FVector CurrentMoveLocation = BlackboardComp->GetValueAsVector(MoveLocationKey.SelectedKeyName);
+		if (!CurrentMoveLocation.IsNearlyZero())
+		{
+			float DistToMoveLocation = FVector::Distance(TargetActor->GetActorLocation(), CurrentMoveLocation);
+			if (DistToMoveLocation < (MinDistance - Tolerance) || DistToMoveLocation > (MaxDistance + Tolerance))
+			{
+				BlackboardComp->ClearValue(MoveLocationKey.SelectedKeyName);
+			}
+		}
+	}
 }

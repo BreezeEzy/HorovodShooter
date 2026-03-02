@@ -27,9 +27,14 @@ protected:
 	FBlackboardKeySelector OutOfRangeKey;
 	
 	UPROPERTY(EditAnywhere, Category = "AI Distance")
+	FBlackboardKeySelector MoveLocationKey;
+	
+	UPROPERTY(EditAnywhere, Category = "AI Distance")
 	float MinDistance = 800.f;
 	
 	UPROPERTY(EditAnywhere, Category = "AI Distance")
 	float MaxDistance = 1500.f;
+	UPROPERTY(EditAnywhere, Category = "AI Distance")
+	float Tolerance = 300.f;
 	
 };
