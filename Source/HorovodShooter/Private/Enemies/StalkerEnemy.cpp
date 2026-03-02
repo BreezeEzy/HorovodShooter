@@ -6,6 +6,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Enemies/EnemyAIController.h"
+#include "TimerManager.h"
+#include "AIController.h"
+#include "BrainComponent.h"
 
 
 // Sets default values
@@ -78,12 +81,41 @@ void AStalkerEnemy::OnWarningRecieved_Implementation(FVector HazardLocation, FVe
 {
 	if (!DashComponent) return;
 	
-	FVector SafeDirection = CalculateEvasionDirection(HazardLocation, HazardVelocity);
+	if (bIsEvading) return;
 	
+	FVector SafeDirection = CalculateEvasionDirection(HazardLocation, HazardVelocity);
 	bool bDidDash = DashComponent->PerformDash(SafeDirection);
+	
 	if (bDidDash)
 	{
+		bIsEvading = true;
 		
+		if (AAIController* AICon = Cast<AAIController>(GetController()))
+		{
+			AICon->StopMovement();
+			if (UBrainComponent* BrainComp = AICon->GetBrainComponent())
+			{
+				BrainComp->PauseLogic("Evading");
+			}
+		}
+		if (UWorld* World = GetWorld())
+		{
+			FTimerHandle EvasionTimer;
+			World->GetTimerManager().SetTimer(EvasionTimer, this, &AStalkerEnemy::ResetEvasionState, 1.0f, false);
+		}
+	}
+}
+
+
+void AStalkerEnemy::ResetEvasionState()
+{
+	bIsEvading = false;
+	if (AAIController* AICon = Cast<AAIController>(GetController()))
+	{
+		if (UBrainComponent* BrainComp = AICon->GetBrainComponent())
+		{
+			BrainComp->ResumeLogic("Evading");
+		}
 	}
 }
 

@@ -47,6 +47,11 @@ protected:
 	TObjectPtr<UAnimMontage> BlindingMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "AI|Evasion")
 	float EvasionCheckDistance = 400.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "AI|Evasion")
+	bool bIsEvading = false;
+	
+	UFUNCTION()
+	void ResetEvasionState();
 	
 private:
 	FVector CalculateEvasionDirection(FVector HazardLocation, FVector HazardVelocity);
