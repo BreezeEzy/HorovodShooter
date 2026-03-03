@@ -143,7 +143,7 @@ void ABaseHitscanWeapon::ProcessWallAvoidance(float DeltaTime)
 			Start,
 			End,
 			FQuat::Identity,
-			ECollisionChannel::ECC_Visibility,
+			ECC_Visibility,
 			FCollisionShape::MakeSphere(AvoidanceRadius),
 			Params
 			);
@@ -185,8 +185,6 @@ void ABaseHitscanWeapon::PerformFire()
 	//DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 2.0f, 0, 2);
 	
 	int32 PenetrationCount = 0;
-	FVector BeamEndLocation = End;
-	
 	while (PenetrationCount <= PiercingCount)
 	{
 		bool bHit = GetWorld()->LineTraceSingleByChannel(
@@ -199,7 +197,6 @@ void ABaseHitscanWeapon::PerformFire()
 		if (bHit)
 		{
 			AActor* HitActor = Hit.GetActor();
-			BeamEndLocation = Hit.Location;
 			if (HitActor)
 			{
 				if (HitActor->Implements<UDamagableInterface>())
@@ -207,7 +204,6 @@ void ABaseHitscanWeapon::PerformFire()
 					IDamagableInterface::Execute_TakeDamage(HitActor, this->DamageTags);
 					Params.AddIgnoredActor(HitActor);
 					PenetrationCount++;
-					continue;
 				}
 				else
 				{
