@@ -49,9 +49,12 @@ protected:
 	float EvasionCheckDistance = 400.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "AI|Evasion")
 	bool bIsEvading = false;
+	UFUNCTION(BlueprintImplementableEvent, Category = "AI|Events")
+	void OnDashEffectStart();
 	
 	UFUNCTION()
 	void ResetEvasionState();
+	
 	
 private:
 	FVector CalculateEvasionDirection(FVector HazardLocation, FVector HazardVelocity);

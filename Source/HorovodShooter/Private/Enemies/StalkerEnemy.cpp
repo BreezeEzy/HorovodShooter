@@ -103,6 +103,7 @@ void AStalkerEnemy::OnWarningRecieved_Implementation(FVector HazardLocation, FVe
 			FTimerHandle EvasionTimer;
 			World->GetTimerManager().SetTimer(EvasionTimer, this, &AStalkerEnemy::ResetEvasionState, 1.0f, false);
 		}
+		OnDashEffectStart();
 	}
 }
 
