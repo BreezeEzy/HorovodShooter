@@ -40,15 +40,15 @@ void UDashComponent::BeginPlay()
 
 bool UDashComponent::PerformDash(FVector DashDirection)
 {
+	//Обязательно проверяем компоненты
 	if (!OwnerCharacter || !OwnerCharacter->GetCharacterMovement()) return false;
 	
 	UWorld* World = GetWorld();
 	if (!World) return false;
 	
+	//Проверяем кулдаун
 	float CurrentTime = GetWorld()->GetRealTimeSeconds();
-	
 	if (CurrentTime - LastDashRealTime < DashCooldown) return false;
-	
 	if (DashDirection.IsNearlyZero())
 	{
 		DashDirection = OwnerCharacter->GetActorForwardVector();
@@ -63,6 +63,7 @@ bool UDashComponent::PerformDash(FVector DashDirection)
 	
 	OwnerCharacter->LaunchCharacter(DashDirection * DashForce, true, true);
 	
+	//Проигрываем звуки
 	if (DashSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, DashSound, OwnerCharacter->GetActorLocation());
@@ -73,6 +74,7 @@ bool UDashComponent::PerformDash(FVector DashDirection)
 	float CurrentTimeDilation = UGameplayStatics::GetGlobalTimeDilation(this);
 	float AdjustedDuration = CurrentTimeDilation - LastDashRealTime;
 	
+	//Запускаем кулдаун рывка
 	World->GetTimerManager().SetTimer(DashDurationTimer, this, &UDashComponent::StopDashing, AdjustedDuration, false);
 
 	return true;
