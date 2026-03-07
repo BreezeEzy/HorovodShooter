@@ -67,6 +67,7 @@ bool UDashComponent::PerformDash(FVector DashDirection)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, DashSound, OwnerCharacter->GetActorLocation());
 	}
+	OnDashPerformed.Broadcast(DashDirection);
 	
 	LastDashRealTime = CurrentTime;
 	
@@ -75,6 +76,7 @@ bool UDashComponent::PerformDash(FVector DashDirection)
 	
 	World->GetTimerManager().SetTimer(DashDurationTimer, this, &UDashComponent::StopDashing, AdjustedDuration, false);
 
+	
 	return true;
 }
 
