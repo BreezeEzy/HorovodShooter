@@ -24,6 +24,7 @@ AStalkerEnemy::AStalkerEnemy()
 	{
 		GetCharacterMovement()->bUseControllerDesiredRotation = true;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
+		GetCharacterMovement()->bRequestedMoveUseAcceleration = true;
 	}
 	AIControllerClass = AEnemyAIController::StaticClass();
 	AutoPossessAI =	EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -61,7 +62,7 @@ void AStalkerEnemy::Tick(float DeltaTime)
 		
 		if (FMath::Abs(DeltaYaw) > 60.0f)
 		{
-			FRotator NewRotation = FMath::RInterpTo(CurrentRotation, FRotator(0.0f, TargetRotation.Yaw, 0.0f), DeltaTime, BodyTurnRate);
+			FRotator NewRotation = FMath::RInterpConstantTo(CurrentRotation, FRotator(0.0f, TargetRotation.Yaw, 0.0f), DeltaTime, 50.0f);
 			SetActorRotation(NewRotation);
 		}
 	}

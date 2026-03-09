@@ -47,7 +47,7 @@ protected:
 	TObjectPtr<UAnimMontage> BlindingMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "AI|Evasion")
 	float EvasionCheckDistance = 400.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "AI|Evasion")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI|Evasion")
 	bool bIsEvading = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,  Category = "AI|Evasion")
  	FVector BurstDirection;
