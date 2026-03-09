@@ -50,6 +50,9 @@ struct FHorovodWagonData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Horovod Settings")
 	FSplineShapeSettings SplineShapeSettings;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Horovod Settings")
+	float FadeDistance = 300.0f;
+	
 	
 };
 

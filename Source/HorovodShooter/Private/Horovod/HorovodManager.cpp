@@ -144,6 +144,8 @@ void AHorovodManager::UpdateUnitPosition()
 {
 	if (SplineLength <= 0.0f) {return;}
 	
+	bool bIsClosedLoop = SplineComponent->IsClosedLoop();
+	
 	for (int32 i = 0; i < AliveUnits.Num(); i++)
 	{
 		ABaseHorovodUnit* Unit = AliveUnits[i];
@@ -158,6 +160,22 @@ void AHorovodManager::UpdateUnitPosition()
 		{
 			DistanceOnSpline += SplineLength;
 		}
+		
+		float TargetScale = 1.0f;
+		if (!bIsClosedLoop && WagonData.FadeDistance > 0.0f)
+		{
+			if (DistanceOnSpline <= WagonData.FadeDistance)
+			{
+				TargetScale = DistanceOnSpline / WagonData.FadeDistance;
+			}
+			else if (DistanceOnSpline >= (SplineLength - WagonData.FadeDistance))
+			{
+				float DistFromEnd = SplineLength - DistanceOnSpline;
+				TargetScale = DistFromEnd/WagonData.FadeDistance;
+			}
+		}
+		float SmoothedScale = FMath::InterpEaseInOut(0.0f, 1.0f, TargetScale, 2.0f);
+		Unit->SetActorScale3D(FVector(SmoothedScale));
 		
 		FVector Location = SplineComponent->GetLocationAtDistanceAlongSpline(DistanceOnSpline, ESplineCoordinateSpace::World);
 		Unit->SetActorLocation(Location);	
