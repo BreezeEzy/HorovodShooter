@@ -51,6 +51,21 @@ void AHorovodManager::Tick(float DeltaTime)
 		float DirectionMultiplyer = WagonData.bReverseDirection ? -1.0f : 1.0f;
 		CurrentGlobalDistance += WagonData.MovementSpeed * DirectionMultiplyer * DeltaTime;
 	}
+	bool bShouldUpdatePositions = true; 
+
+	if (APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0))
+	{
+		FVector PlayerLookDir = PlayerPawn->GetViewRotation().Vector();
+		FVector DirToHorovod = (GetActorLocation() - PlayerPawn->GetActorLocation()).GetSafeNormal();
+		float DotResult = FVector::DotProduct(PlayerLookDir, DirToHorovod);
+
+
+		if (DotResult < -0.2f)
+		{
+			bShouldUpdatePositions = false;
+		}
+	}
+	if (bShouldUpdatePositions)
 	UpdateUnitPosition();
 
 }
