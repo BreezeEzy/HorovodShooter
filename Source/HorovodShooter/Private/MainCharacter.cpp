@@ -34,13 +34,16 @@ void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	DefaultGroundFriction = GetCharacterMovement()->GroundFriction;
+	DefaultBrakingDeceleration = GetCharacterMovement()->BrakingDecelerationWalking;
+	DefaultMaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	
 	GrabberComponent = FindComponentByClass<UGrabberComponent>();
 	if (!GrabberComponent)
 	{
 		UE_LOG(LogTemp, Error, TEXT("MainCharacter: GrabberComponent not found! Please add it in Blueprint."));
 	}
 	
-
 	if (FirstPersonCamera)
 	{
 		DefaultCameraLocation = FirstPersonCamera->GetRelativeLocation();
@@ -104,6 +107,44 @@ void AMainCharacter::TakeDamage_Implementation(const FGameplayTagContainer& Inco
 	}
 }
 
+void AMainCharacter::ReceiveStatusEffect_Implementation(const FGameplayTag& StatusTag, float Duration)
+{
+	if (bIsDead) {return;}
+	UWorld* World = GetWorld();
+	if (!World) {return;}
+	
+	if (!ActiveStatuses.Contains(StatusTag))
+	{
+		ApplyStatus(StatusTag);
+	}
+	
+	FTimerHandle& TimerHandle = ActiveStatuses.FindOrAdd(StatusTag);
+	
+	FTimerDelegate TimerDel;
+	TimerDel.BindUObject(this, &AMainCharacter::RemoveStatus, StatusTag);
+	
+	World->GetTimerManager().SetTimer(TimerHandle, TimerDel, Duration, false);
+}
+
+
+void AMainCharacter::ApplyStatus(const FGameplayTag& StatusTag)
+{
+	if (StatusTag.MatchesTag(FGameplayTag::RequestGameplayTag("Status.Slowed")))
+	{
+		GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed * 0.3;
+	}
+}
+
+void AMainCharacter::RemoveStatus(FGameplayTag StatusTag)
+{
+	ActiveStatuses.Remove(StatusTag);
+
+	if (StatusTag.MatchesTag(FGameplayTag::RequestGameplayTag("Status.Slowed")))
+	{
+		GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed;
+	}
+}
+
 void AMainCharacter::ResetCharacterState()
 {
 	bIsDead = false;
@@ -111,20 +152,10 @@ void AMainCharacter::ResetCharacterState()
 	// Включаем физику обратно
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	GetCharacterMovement()->Velocity = FVector::ZeroVector;
-	
-	
-	
+	GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed;
+
 }
 
-void AMainCharacter::ToggleTimeDilation(const FInputActionValue& Value)
-{
-	if (UWorld* const World = GetWorld())
-	{
-		UGameplayStatics::SetGlobalTimeDilation(World, bIsTimeDilated ? 1.0f : 0.01f);
-		bIsTimeDilated = !bIsTimeDilated;
-		this->CustomTimeDilation = 1.0f;
-	}
-}
 
 void AMainCharacter::ProcessMovementEffects(float DeltaTime)
 {

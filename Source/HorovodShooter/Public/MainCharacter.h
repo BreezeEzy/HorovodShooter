@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "Interfaces/DamagableInterface.h"
+#include "Interfaces/StatusReceiverInterface.h"
 #include "GameplayTagContainer.h"
 #include "MainCharacter.generated.h"
 
@@ -14,7 +15,7 @@ class UDashComponent;
 
 
 UCLASS()
-class HOROVODSHOOTER_API AMainCharacter : public ACharacter, public IDamagableInterface
+class HOROVODSHOOTER_API AMainCharacter : public ACharacter, public IDamagableInterface, public IStatusReceiverInterface
 {
 	GENERATED_BODY()
 
@@ -31,7 +32,9 @@ public:
 	
 	// Интерфейс получения урона
 	virtual void TakeDamage_Implementation(const FGameplayTagContainer& IncomingDamageTags) override;
-
+	
+	virtual void ReceiveStatusEffect_Implementation(const FGameplayTag& StatusTag, float Duration) override;
+	
 	// Функция полного сброса состояния (вызывается Контроллером при респауне)
 	void ResetCharacterState();
 
@@ -42,7 +45,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Dash")
 	void OnDashStart();
 
-	// --- COMPONENTS ---
+	// COMPONENTS
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<UCameraComponent> FirstPersonCamera;
 	
@@ -52,7 +55,7 @@ public:
 	TObjectPtr<UDashComponent> DashComponent;
 	
 
-	// --- INPUT ACTIONS ---
+	// INPUT ACTIONS
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> JumpAction;
 	
@@ -71,21 +74,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> ToggleTimeDilationAction;
 
-	// --- DASH SETTINGS ---
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MovementFeel|Dash", meta = (ClampMin = "0.0"))
-	float DashForce = 4000.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MovementFeel|Dash", meta = (ClampMin = "0.0"))
-	float DashDuration = 0.2f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MovementFeel|Dash", meta = (ClampMin = "0.0"))
-	float DashCooldown = 1.0f;
 	
+	//STATUS EFFECTS
+	TMap<FGameplayTag, FTimerHandle> ActiveStatuses;
+	float DefaultMaxWalkSpeed;
+	float DefaultGroundFriction;
+	float DefaultBrakingDeceleration;
 	
+	void ApplyStatus(const FGameplayTag& StatusTag);
+	void RemoveStatus(FGameplayTag StatusTag);
 	
-	//TimeDilation
-	void ToggleTimeDilation(const FInputActionValue& Value);
-	UPROPERTY()
-	bool bIsTimeDilated = false;
-	
+
 	//Настройки качания головой
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MovementFeel|Audio")
 	float StepDistance = 350.0f;
