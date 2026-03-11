@@ -18,42 +18,30 @@ struct FHorovodWagonData
 	GENERATED_BODY()
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Horovod Settings")
 	int32 TotalUnitsCount = 10;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Horovod Settings")
 	TArray<TSubclassOf<ABaseHorovodUnit>> SpawnPattern;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Horovod Settings")
 	float MovementSpeed = 200.0f;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Horovod Settings")
 	bool bReverseDirection = false;
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Horovod Settings")
 	int32 AliveCount = 0;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Horovod Settings")
 	bool bIsChasing = false;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Horovod Settings")
 	float ChaseInterpSpeed = 2.0f;
-	
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Horovod Settings")
 	bool bLockHeight = false;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Horovod Settings")
 	bool bRotateAsSpline = false;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Horovod Settings")
 	bool bCirculate = true;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Horovod Settings")
 	FSplineShapeSettings SplineShapeSettings;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Horovod Settings")
 	float FadeDistance = 300.0f;
-	
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Horovod Settings")
+	bool bIsDecorative = false;
 };
 
 UCLASS()

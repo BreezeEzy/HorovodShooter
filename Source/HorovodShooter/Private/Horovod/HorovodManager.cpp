@@ -53,21 +53,24 @@ void AHorovodManager::Tick(float DeltaTime)
 	}
 	bool bShouldUpdatePositions = true; 
 
-	if (APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0))
+	if (WagonData.bIsDecorative)
 	{
-		FVector PlayerLookDir = PlayerPawn->GetViewRotation().Vector();
-		FVector DirToHorovod = (GetActorLocation() - PlayerPawn->GetActorLocation()).GetSafeNormal();
-		float DotResult = FVector::DotProduct(PlayerLookDir, DirToHorovod);
-
-
-		if (DotResult < -0.2f)
+		if (APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0))
 		{
-			bShouldUpdatePositions = false;
+			FVector PlayerLookDir = PlayerPawn->GetViewRotation().Vector();
+			FVector DirToHorovod = (GetActorLocation() - PlayerPawn->GetActorLocation()).GetSafeNormal();
+			float DotResult = FVector::DotProduct(PlayerLookDir, DirToHorovod);
+		
+			if (DotResult < -0.2f)
+			{
+				bShouldUpdatePositions = false;
+			}
 		}
 	}
 	if (bShouldUpdatePositions)
-	UpdateUnitPosition();
-
+	{
+		UpdateUnitPosition();
+	}
 }
 
 void AHorovodManager::InitializeFromData(const FHorovodWagonData& NewData)
