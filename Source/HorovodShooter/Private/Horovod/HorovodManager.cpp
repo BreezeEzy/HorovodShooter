@@ -209,11 +209,11 @@ void AHorovodManager::UpdateUnitPosition()
 		Unit->SetActorScale3D(FVector(SmoothedScale));
 		
 		FVector Location = SplineComponent->GetLocationAtDistanceAlongSpline(DistanceOnSpline, ESplineCoordinateSpace::World);
-		Unit->SetActorLocation(Location);	
+		Unit->SetActorLocation(Location, false, nullptr, ETeleportType::TeleportPhysics);	
 		if (WagonData.bRotateAsSpline)
 		{
 			FRotator Rotation = SplineComponent->GetRotationAtDistanceAlongSpline(DistanceOnSpline, ESplineCoordinateSpace::World);
-			Unit->SetActorLocationAndRotation(Location, Rotation);
+			Unit->SetActorLocationAndRotation(Location, Rotation, false, nullptr, ETeleportType::TeleportPhysics);
 		}
 	}
 }
