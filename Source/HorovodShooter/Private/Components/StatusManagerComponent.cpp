@@ -21,6 +21,7 @@ void UStatusManagerComponent::ReceiveStatusEffect(const FGameplayTag& StatusTag,
 	if (!ActiveStatuses.Contains(StatusTag))
 	{
 		ActiveStatuses.Add(StatusTag);
+		ApplyStatus(StatusTag);
 	}
 	FTimerHandle& TimerHandle = ActiveStatuses.FindOrAdd(StatusTag);
 	
