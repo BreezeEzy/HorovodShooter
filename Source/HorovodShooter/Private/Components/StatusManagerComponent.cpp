@@ -14,20 +14,22 @@ UStatusManagerComponent::UStatusManagerComponent()
 
 void UStatusManagerComponent::ReceiveStatusEffect(const FGameplayTag& StatusTag, float Duration)
 {
+	//Validation check
 	if (!OwnerCharacter) {return;}
 	UWorld* World = GetWorld();
 	if (!World) {return;}
 	
+	//Checking tags
 	if (!ActiveStatuses.Contains(StatusTag))
 	{
 		ActiveStatuses.Add(StatusTag);
 		ApplyStatus(StatusTag);
 	}
-	FTimerHandle& TimerHandle = ActiveStatuses.FindOrAdd(StatusTag);
 	
+	//Create timers and delegates
+	FTimerHandle& TimerHandle = ActiveStatuses.FindOrAdd(StatusTag);
 	FTimerDelegate TimerDel;
 	TimerDel.BindUObject(this, &UStatusManagerComponent::RemoveStatus, StatusTag);
-	
 	World->GetTimerManager().SetTimer(TimerHandle, TimerDel, Duration, false);
 }
 
@@ -47,9 +49,11 @@ void UStatusManagerComponent::BeginPlay()
 
 void UStatusManagerComponent::ClearAllStatuses()
 {
+	//Validation checks
 	UWorld* World = GetWorld();
 	if (!World) {return;}
 	
+	//Clear all statuses one by one
 	for (auto& Pair: ActiveStatuses)
 	{
 		World->GetTimerManager().ClearTimer(Pair.Value);
@@ -61,9 +65,13 @@ void UStatusManagerComponent::ClearAllStatuses()
 	ActiveStatuses.Empty();
 }
 
+
 void UStatusManagerComponent::ApplyStatus(const FGameplayTag& StatusTag)
 {
+	//Validation check
 	if (!OwnerCharacter || !OwnerCharacter->GetCharacterMovement()) {return;}
+	
+	//Go through statuses and apply them
 	if (StatusTag.MatchesTag(FGameplayTag::RequestGameplayTag("Status.Slowed")))
 	{
 		OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed * 0.2;
@@ -74,6 +82,8 @@ void UStatusManagerComponent::RemoveStatus(FGameplayTag StatusTag)
 {
 	ActiveStatuses.Remove(StatusTag);
 	if (!OwnerCharacter || !OwnerCharacter->GetCharacterMovement()) {return;}
+	
+	
 	if (StatusTag.MatchesTag(FGameplayTag::RequestGameplayTag("Status.Slowed")))
 	{
 		OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed;
