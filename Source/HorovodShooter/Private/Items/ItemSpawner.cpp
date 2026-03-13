@@ -46,7 +46,7 @@ void AItemSpawner::Tick(float DeltaTime)
 		FRotator NewRotation = CurrentWaitingItem->GetActorRotation();
 		NewRotation.Yaw += RotateSpeed * DeltaTime;
 	
-		CurrentWaitingItem->SetActorLocationAndRotation(NewLocation, NewRotation, false, nullptr, ETeleportType::TeleportPhysics);
+		CurrentWaitingItem->SetActorLocationAndRotation(NewLocation, NewRotation,true, nullptr, ETeleportType::TeleportPhysics);
 	}
 }
 
@@ -72,6 +72,11 @@ void AItemSpawner::TrySpawnItem()
 	
 	if (SpawnedActor)
 	{
+		if (UPrimitiveComponent* RootComp = Cast<UPrimitiveComponent>(SpawnedActor->GetRootComponent()))
+		{
+			RootComp->SetSimulatePhysics(false);
+		}
+		
 		TrackedItems.Add(SpawnedActor);
 		CurrentWaitingItem = SpawnedActor;
 		BaseItemLocation = SpawnedActor->GetActorLocation();
@@ -84,7 +89,7 @@ void AItemSpawner::TrySpawnItem()
 
 void AItemSpawner::CleanUpTrackedItems()
 {
-	TrackedItems.RemoveAll([](AActor* Item) {return IsValid(Item);});
+	TrackedItems.RemoveAll([](AActor* Item) {return !IsValid(Item);});
 }
 
 void AItemSpawner::ExtractItem()

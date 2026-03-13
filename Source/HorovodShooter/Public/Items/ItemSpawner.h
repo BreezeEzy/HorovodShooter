@@ -28,7 +28,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> SpawnerBaseMesh;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Spawner Settings")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spawner Settings")
 	TSubclassOf<AActor> ItemClassToSpawn;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner Settings")

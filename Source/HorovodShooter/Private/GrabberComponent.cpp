@@ -10,6 +10,7 @@
 #include "Interfaces/GrabbableInterface.h"
 #include "Interfaces/UsableInterface.h"
 #include "Items/ABaseThowableItem.h"
+#include "Items/ItemSpawner.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 
 // Sets default values for this component's properties
@@ -61,6 +62,14 @@ void UGrabberComponent::AttemptGrab()
 	FHitResult HitResult = GetPhysicsBodyInReach();
 	UPrimitiveComponent* ComponentToGrab = HitResult.GetComponent();
 	AActor* ActorHit = HitResult.GetActor();
+	
+	if (ActorHit)
+	{
+		if (AItemSpawner* Spawner = Cast<AItemSpawner>(ActorHit->GetOwner()))
+		{
+			Spawner->ExtractItem();
+		}
+	}
 	
 	if (ActorHit && ComponentToGrab)
 	{
