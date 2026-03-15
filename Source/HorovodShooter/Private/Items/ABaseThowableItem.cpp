@@ -103,7 +103,6 @@ void AABaseThowableItem::OnGrabbed_Implementation(USceneComponent* GrabberCompon
 
 void AABaseThowableItem::OnReleased_Implementation(AActor* Releaser)
 {
-	this->CustomTimeDilation = 0.0f;
 	SetState(EThrowableState::Loot);
 }
 
@@ -163,6 +162,7 @@ void AABaseThowableItem::SetState(EThrowableState NewState)
 		ItemMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 		ProjectileMovement->Deactivate();
 		ProjectileMovement->Velocity = FVector::ZeroVector;
+		SetActorTickEnabled(false);
 		break;
 	case EThrowableState::Held:
 		DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
@@ -179,6 +179,7 @@ void AABaseThowableItem::SetState(EThrowableState NewState)
 		}
 		ItemMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 		ProjectileMovement->Deactivate();
+		SetActorTickEnabled(false);
 		break;
 	case EThrowableState::Thrown:
 		ItemMesh->SetSimulatePhysics(false);
@@ -199,6 +200,8 @@ void AABaseThowableItem::SetState(EThrowableState NewState)
 		
 		bHasSentWarning = false;
 		WarningCooldown = 0.0f;
+		SetActorTickEnabled(true);
+
 		break;
 	case EThrowableState::Impact:
 		ProjectileMovement->Deactivate();
@@ -235,7 +238,8 @@ void AABaseThowableItem::CheckTreatedActors(float DeltaTime)
 		FCollisionShape::MakeSphere(WarningSphereRadius),
 		CollisionParams
 		);
-	DrawDebugCapsule(
+	
+	/* DrawDebugCapsule(
 		GetWorld(),
 		StartLocation + (EndLocation - StartLocation) * 0.5f,
 		(EndLocation - StartLocation).Size() * 0.5f, 
@@ -244,6 +248,7 @@ void AABaseThowableItem::CheckTreatedActors(float DeltaTime)
 		bHit ? FColor::Red : FColor::Green,
 		false,
 		0.1);
+	*/
 	
 	if (bHit && Hit.GetActor())
 	{
