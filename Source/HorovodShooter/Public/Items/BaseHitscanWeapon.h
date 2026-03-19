@@ -20,6 +20,7 @@ public:
 	
 	virtual bool OnUsePressed_Implementation() override;
 	virtual void HandleImpact_Implementation(const FHitResult& Hit) override;
+	virtual void OnGrabbed_Implementation(USceneComponent* GrabberComponent) override;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -64,6 +65,8 @@ protected:
 	
 	UFUNCTION(BlueprintImplementableEvent, Category = "Effects")
 	void OnExplode();
+	
+	
 	
 	
 private:

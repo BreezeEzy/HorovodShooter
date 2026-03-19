@@ -72,6 +72,13 @@ void ABaseHitscanWeapon::HandleImpact_Implementation(const FHitResult& Hit)
 	
 }
 
+void ABaseHitscanWeapon::OnGrabbed_Implementation(USceneComponent* GrabberComponent)
+{
+	Super::OnGrabbed_Implementation(GrabberComponent);
+	
+	SetActorTickEnabled(true);
+}
+
 void ABaseHitscanWeapon::Explode()
 {
 	TArray<AActor*> OverlappedActors;
