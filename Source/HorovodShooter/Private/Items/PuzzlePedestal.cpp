@@ -96,11 +96,13 @@ void APuzzlePedestal::ForceReleaseItem(AActor* OtherActor)
 
 void APuzzlePedestal::DisableItemPhysics(AActor* OtherActor)
 {
+	//Отключаем физику предмета, попавшего в паз
 	if (UPrimitiveComponent* PrimComp = Cast<UPrimitiveComponent>(OtherActor->GetRootComponent()))
 	{
 		PrimComp->SetSimulatePhysics(false);
 		PrimComp->SetCollisionProfileName(TEXT("NoCollision"));	
 	}
+	//Останавливаем движение
 	if (UProjectileMovementComponent* PMC = OtherActor->FindComponentByClass<UProjectileMovementComponent>())
 	{
 		PMC->StopMovementImmediately();
@@ -114,8 +116,9 @@ void APuzzlePedestal::AttachItemToSlot(AActor* OtherActor, FPedestalSlot& Slot, 
 	OtherActor->AttachToComponent(PedestalMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, Slot.AttachSocketName);
 	Slot.bIsFilled = true;
 	Slot.AttachedItem = OtherActor;
-	
+	//Вызываем событие на заполнение слота
 	OnSlotFilled(i, OtherActor);
+	//Проверяем, заполнили ли мы все слоты
 	if (CheckIfAllSlotsFilled())
 	{
 		ActivatePedestal();
