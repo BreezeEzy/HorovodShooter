@@ -206,6 +206,7 @@ void ABaseHitscanWeapon::PerformFire()
 			AActor* HitActor = Hit.GetActor();
 			if (HitActor)
 			{
+				PlayHitEffects(Hit.Location);
 				if (HitActor->Implements<UDamagableInterface>())
 				{
 					IDamagableInterface::Execute_TakeDamage(HitActor, this->DamageTags);

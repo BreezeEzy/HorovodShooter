@@ -62,7 +62,8 @@ protected:
 	
 	UFUNCTION(BlueprintImplementableEvent, Category = "Effects")
 	void OnFire(const FVector& TraceStart, const FVector& TraceEnd, bool bIsLastShot);
-	
+	UFUNCTION(BlueprintImplementableEvent, Category = "Effects")
+	void PlayHitEffects(const FVector& HitLocation);
 	UFUNCTION(BlueprintImplementableEvent, Category = "Effects")
 	void OnExplode();
 	
